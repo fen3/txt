@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>文本</title>
+  <style>
+  div {
+    margin: 5px;
+    width:100%;
+  }
+  #main > div {
+    width: 96%;
+  }
+  input {
+    width: 200px;
+  }
+  textarea {
+    height:220px;
+    width: 96%;
+  }
+  #btGen {
+    width: 100px;
+  }
+    </style>
+</head>
+
+<body>
+    <div id="main" style="width:100%;">
+        <div>
+          <h3>Text</h3>
+          <textarea id="txt">a, b, c
+1, 2, 3
+a1, b1, c1</textarea>
+        </div>
+        <div>
+          <label>分隔符<input type="text" id="colseparator" value=","></label>
+          <label>分行符<input type="text" id="rowseparator" value="\n"></label>
+        </div>
+        <div>
+          <h3>Pattern</h3>
+          <textarea id="pattern">{0}--{2}--{1}</textarea>
+        </div>
+        <button id="btGen"">生成</button>
+        <div>
+          <h3>Result</h3>
+          <textarea id="rst"></textarea>
+        </div>
+      </div>
+<script>
+  get_rows = function(txt, rowseparator){
+    return txt.split(rowseparator);
+  }
+  get_cols = function(row, colseparator){
+    return row.split(colseparator);
+  }
+  get_array = function(txt, rowseparator, colseparator){
+    var rows = get_rows(txt, rowseparator);
+    var rst = [];
+    for(var i = 0, max = rows.length; i < max; i++){
+      console.log(i, rows[i]);
+      var row = rows[i];
+      if(row.trim() !== ''){
+        var cols = get_cols(row, colseparator).map(c => c.trim());
+        rst.push(cols);
+      }
+    }
+    return rst;
+  };
+  format = function(tmp, args){
+    return tmp.replace(/{(\d+)}/g, function(match, index){
+      return typeof args[index] != 'undefined' ? args[index] : match;
+    })
+  };
+  gen_resutl = function(){
+    var ipt_txt = document.getElementById("txt");
+    var ipt_pattern = document.getElementById("pattern");
+    var ipt_rst = document.getElementById("rst");
+    var txt = ipt_txt.value;
+    console.log('txt: ', txt);
+    var pattern = ipt_pattern.value;
+    var colseparator = document.getElementById("colseparator").value;
+    var rowseparator = document.getElementById("rowseparator").value.replace("\\n", "\n");
+    var rows = get_array(txt, rowseparator, colseparator);
+    console.log(rowseparator.replace("\\\\", "\\"));
+    console.log(colseparator);
+    console.log(rows);
+    var rst_rows = rows.map(r => format(pattern, r));
+    console.log(rst_rows);
+    ipt_rst.value = rst_rows.join("\n");
+  }
+  run = function(){
+    var btgen = document.getElementById("btGen");
+    btgen.addEventListener("click", gen_resutl);
+  }
+  if (document.readyState != 'loading') run();
+    // modern browsers
+    else if (document.addEventListener) document.addEventListener('DOMContentLoaded', run);
+    // IE <= 8
+    else document.attachEvent('onreadystatechange', function() {
+      if (document.readyState == 'complete') run();
+    });
+</script>
+</body>
+</html>
