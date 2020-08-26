@@ -72,6 +72,9 @@ a1, b1, c1</textarea>
       return typeof args[index] != 'undefined' ? args[index] : match;
     })
   };
+  tochange = function(separator){
+    return separator.replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t");
+  }
   gen_resutl = function(){
     var ipt_txt = document.getElementById("txt");
     var ipt_pattern = document.getElementById("pattern");
@@ -79,14 +82,11 @@ a1, b1, c1</textarea>
     var txt = ipt_txt.value;
     console.log('txt: ', txt);
     var pattern = ipt_pattern.value;
-    var colseparator = document.getElementById("colseparator").value;
-    var rowseparator = document.getElementById("rowseparator").value.replace("\\n", "\n");
+    var colseparator = tochange(document.getElementById("colseparator").value);
+    var rowseparator = tochange(document.getElementById("rowseparator").value);
     var rows = get_array(txt, rowseparator, colseparator);
-    console.log(rowseparator.replace("\\\\", "\\"));
-    console.log(colseparator);
-    console.log(rows);
     var rst_rows = rows.map(r => format(pattern, r));
-    console.log(rst_rows);
+    console.log(colseparator, rowseparator);
     ipt_rst.value = rst_rows.join("\n");
   }
   run = function(){
